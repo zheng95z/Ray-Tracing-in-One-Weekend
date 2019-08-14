@@ -5,8 +5,9 @@ using namespace std;
 
 int main() 
 {
+    // 使用 ofstream 输出图片到文件，原书中只给出了输出到命令行的方式
     ofstream outfile;
-    outfile.open("firstImage.ppm");
+    outfile.open("ch0&1Image.ppm");
 
     int nx = 200;
     int ny = 100;
