@@ -6,6 +6,7 @@ using namespace std;
 int main() 
 {
     // 使用 ofstream 输出图片到文件，原书中只给出了输出到命令行的方式
+    // ppm 格式的图片推荐使用 Adobe Photoshop 打开查看
     ofstream outfile;
     outfile.open("ch0&1Image.ppm");
 
