@@ -7,7 +7,7 @@ int main()
 {
 
 	ofstream outfile;
-	outfile.open("ch2Image.txt");
+	outfile.open("ch2Image.ppm");
 
 	int nx = 200;
 	int ny = 100;
