@@ -1,25 +1,18 @@
 #pragma once
+#include "ray.h"
 
-#include "Ray.h"
-
-class Camera 
-{
+class camera {
 public:
-	Camera()
-	{
-		lower_left_corner = Vec3(-2.0f, -1.0f, -1.0f);
-		horizontal = Vec3(4.0f, 0.0f, 0.0f);
-		vertical = Vec3(0.0f, 2.0f, 0.0f);
-		origin = Vec3(0.0f, 0.0f, 0.0f);
+	camera() {
+		lower_left_corner = vec3(-2.0, -1.0, -1.0); // ×óÏÂ½Ç
+		horizontal = vec3(4.0, 0.0, 0.0); // ºáÖá
+		vertical = vec3(0.0, 2.0, 0.0); // ÊúÖá
+		origin = vec3(0.0, 0.0, 0.0); // eye
 	}
+	ray get_ray(float u, float v) { return ray(origin, lower_left_corner + u * horizontal + v * vertical); }
 
-	Ray getRay(float u, float v) 
-	{
-		return Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-	}
-
-	Vec3 lower_left_corner;
-	Vec3 origin;
-	Vec3 horizontal;
-	Vec3 vertical;
+	vec3 lower_left_corner;
+	vec3 origin;
+	vec3 horizontal;
+	vec3 vertical;
 };

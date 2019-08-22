@@ -1,51 +1,45 @@
 #pragma once
+#include "hitable.h"
 
-#include "Hitable.h"
-
-Vec3 Reflect(const Vec3& v, const Vec3& n)
-{
-	return v - 2 * dot(v, n)*n;
-}
-
-Vec3 RandomInUnitSphere()
-{
-	Vec3 p;
+vec3 random_in_unit_sphere() {
+	vec3 p;
 	do {
-		p = 2.0f * Vec3((rand() % 100 / float(100)), (rand() % 100 / float(100)), (rand() % 100 / float(100))) - Vec3(1.0f, 1.0f, 1.0f);
-	} while (dot(p, p) >= 1.0f);
-
+		p = 2.0f * vec3((rand() % 100 / float(100)), (rand() % 100 / float(100)), (rand() % 100 / float(100))) - vec3(1.0f, 1.0f, 1.0f);
+	} while (p.squared_length() >= 1.0f);
 	return p;
 }
 
-class Material {
+class material {
 public:
-	virtual bool Scatter(const Ray& r_in, const hit_record& rec, Vec3& attenuation, Ray& scattered) const = 0;
+	virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const = 0;
 };
 
-class Lambertian : public Material {
+class lambertian : public material {
 public:
-	Lambertian(const Vec3& a):albedo(a){}
-	virtual bool Scatter(const Ray& r_in, const hit_record& rec, Vec3& attenuation, Ray& scattered) const {
-		Vec3 target = rec.p + rec.normal + RandomInUnitSphere();
-		scattered = Ray(rec.p, target - rec.p);
+	lambertian(const vec3& a) : albedo(a) {}
+	virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
+		vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		scattered = ray(rec.p, target - rec.p);
 		attenuation = albedo;
 		return true;
 	}
-	Vec3 albedo;
+	vec3 albedo;
 };
 
-class Metal : public Material {
+vec3 reflect(const vec3& v, const vec3& n) {
+	return v - 2 * dot(v, n)*n;
+}
+
+class metal : public material {
 public:
-	Metal(const Vec3& a, float f) : albedo(a) { if (f < 1) fuzz = f; else fuzz = 1; }
-
-	virtual bool Scatter(const Ray& r_in, const hit_record& rec, Vec3& attenuation, Ray& scattered) const
-	{
-		Vec3 reflected = Reflect(unit_vector(r_in.direction()), rec.normal);
-		scattered = Ray(rec.p, reflected + fuzz*RandomInUnitSphere());
+	metal(const vec3& a, float f) : albedo(a), fuzz(f) {}
+	virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
+		vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
+		scattered = ray(rec.p, reflected + fuzz*random_in_unit_sphere());
 		attenuation = albedo;
-		return (dot(scattered.direction(), rec.normal) > 0);
+		return (dot(scattered.direction(), rec.normal) > 0); // 反射出的光线若与 normal 夹角大于90度，则不正确
 	}
-
-	Vec3 albedo;
+	vec3 albedo;
 	float fuzz;
 };
+
